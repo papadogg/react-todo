@@ -1,6 +1,9 @@
 import React from 'react';
+import {connect} from 'react-redux';
+let actions = require ('actions');
 
-class AddTodo extends React.Component {
+
+export class AddTodo extends React.Component {
   render(){
     return (
       <div className="container_footer">
@@ -13,10 +16,11 @@ class AddTodo extends React.Component {
   }
   handleSubmit(e){
     e.preventDefault();
+    let {dispatch} = this.props;
     let todoText = this.refs.todoText.value;
 
     if(todoText.length > 0){
-      this.props.onAddTodo(todoText);
+      dispatch(actions.addTodo(todoText));
       this.refs.todoText.value = "";
     } else {
       this.refs.todoText.focus();
@@ -25,4 +29,4 @@ class AddTodo extends React.Component {
   }
 }
 
-export default AddTodo;
+export default connect()(AddTodo);

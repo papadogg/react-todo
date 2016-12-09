@@ -3,55 +3,28 @@ import ReactDOM from 'react-dom';
 import expect from 'expect';
 import $ from 'jQuery';
 import TestUtils from 'react-addons-test-utils';
+import {Provider} from 'react-redux';
 
+import {configure} from 'configureStore';
 import TodoApp from 'TodoApp';
+import TodoList from 'TodoList';
 
 describe('TodoApp',()=>{
   it('should exist',()=>{
     expect(TodoApp).toExist();
   });
 
-  it('should add todo to the todos state on handleAddTodo',()=>{
-    let todoText = "test text";
-    let todoApp = TestUtils.renderIntoDocument(<TodoApp/>);
+  it('should render TodoList',()=>{
+    let store = configure();
+    let provider = TestUtils.renderIntoDocument(
+      <Provider store={store}>
+        <TodoApp/>
+      </Provider>
+    );
 
-    todoApp.state.todos = [];
-    todoApp.handleAddTodo(todoText);
+    let todoApp = TestUtils.scryRenderedComponentsWithType(provider,TodoApp)[0];
+    let todoList = TestUtils.scryRenderedComponentsWithType(todoApp,TodoList);
 
-    expect(todoApp.state.todos[0].text).toBe(todoText);
-    expect(todoApp.state.todos[0].createdAt).toBeA('number');
-  });
-
-  it('should toggle completed value when handleToggle called',()=>{
-    let todoData = {
-      id:11,
-      text: 'Test feature',
-      completed:false,
-      createdAt:0,
-      completedAt:undefined
-    };
-    let todoApp = TestUtils.renderIntoDocument(<TodoApp/>);
-    todoApp.setState({todos:[todoData]});
-
-    expect(todoApp.state.todos[0].completed).toBe(false);
-
-    todoApp.handleToggle(11);
-    expect(todoApp.state.todos[0].completed).toBe(true);
-    expect(todoApp.state.todos[0].completedAt).toBeA('number');
-  });
-
-  it('should set completedAt to undefined when set completed status to false',()=>{
-    let todoData = {
-      id:11,
-      text: 'Test feature',
-      completed:true,
-      createdAt:0,
-      completedAt:60
-    };
-    let todoApp = TestUtils.renderIntoDocument(<TodoApp/>);
-    todoApp.setState({todos:[todoData]});
-
-    todoApp.handleToggle(11);
-    expect(todoApp.state.todos[0].completedAt).toNotBeA('number');
+    expect(todoList.length).toEqual(1);
   });
 });
